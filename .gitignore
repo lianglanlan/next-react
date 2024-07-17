@@ -42,6 +42,7 @@ tsconfig.tsbuildinfo
 .cssrem
 .yalc
 yalc.lock
+.env
 
 
 .vscode/*
