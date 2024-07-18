@@ -25,7 +25,9 @@ export const generateYAxis = (revenue: Revenue[]) => {
   // Calculate what labels we need to display on the y-axis
   // based on highest record and in 1000s
   const yAxisLabels = [];
+  // 取所有revenue值中的最大值
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
+  // 获取y轴的最大值
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
 
   for (let i = topLabel; i >= 0; i -= 1000) {
