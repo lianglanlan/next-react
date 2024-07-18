@@ -30,6 +30,14 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   try {
+    /**
+     * SELECT：选择要返回的列，包括发票金额 (invoices.amount)、客户名称 (customers.name)、客户图片 URL (customers.image_url)、客户电子邮件 (customers.email) 和发票 ID (invoices.id)。
+     * FROM：指定主表为 invoices
+     * JOIN：使用 JOIN 语句将 invoices 表与 customers 表连接，连接条件是 invoices.customer_id = customers.id。
+     * ORDER BY：按 invoices.date 列降序排列结果，以获取最近的发票。
+     * DESC：DESCENDING 的缩写，用于指定排序顺序为降序。与之相对的是 ASC，即 ASCENDING，用于指定升序排序。
+     * LIMIT：限制结果集为前 5 条记录
+     */
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
