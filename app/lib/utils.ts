@@ -1,6 +1,7 @@
 import { Revenue } from './definitions';
 
 export const formatCurrency = (amount: number) => {
+  // toLocaleString返回这个数字特定于语言环境的表示字符串。后面的option对象是货币格式
   return (amount / 100).toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
