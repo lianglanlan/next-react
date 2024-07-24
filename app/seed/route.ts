@@ -105,7 +105,7 @@ async function deleteInvoicesCopy() {
           amount,
           status,
           date,
-          ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY id) AS row_num
+          ROW_NUMBER() OVER (PARTITION BY customer_id, amount, date ORDER BY id) AS row_num
       FROM invoices
     )
     DELETE FROM invoices
