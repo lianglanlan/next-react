@@ -95,6 +95,28 @@ async function seedInvoices() {
   return insertedInvoices;
 }
 
+// 删除重复的数据(invoices数据不知道怎么多写入了一遍)
+async function deleteInvoicesCopy() {
+  await client.sql`
+    WITH CTE AS (
+      SELECT 
+          id,
+          customer_id,
+          amount,
+          status,
+          date,
+          ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY id) AS row_num
+      FROM invoices
+    )
+    DELETE FROM invoices
+    WHERE id IN (
+        SELECT id
+        FROM CTE
+        WHERE row_num > 1
+    );
+  `
+}
+
 async function seedCustomers() {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
@@ -152,6 +174,7 @@ export async function GET() {
     await seedCustomers();
     await seedInvoices();
     await seedRevenue();
+    await deleteInvoicesCopy();
     await client.sql`COMMIT`;
 
     return Response.json({ message: 'Database seeded successfully' });

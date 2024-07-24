@@ -18,3 +18,6 @@ npm install -g pnpm
 pnpm i @vercel/postgres
 ```
 安装vercel/postgres
+
+## 写入数据
+写入数据的代码在`app/seed/route.ts`文件里，打开 http://localhost:3000/seed 网址进行写入操作。
