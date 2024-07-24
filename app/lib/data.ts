@@ -33,8 +33,6 @@ export async function fetchLatestInvoices() {
      * DESC：DESCENDING 的缩写，用于指定排序顺序为降序。与之相对的是 ASC，即 ASCENDING，用于指定升序排序。
      * LIMIT：限制结果集为前 5 条记录
      */
-    console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
@@ -46,8 +44,6 @@ export async function fetchLatestInvoices() {
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
-    console.log('Data fetch completed after 3 seconds.');
-
     return latestInvoices;
 
   } catch (error) {
@@ -64,6 +60,8 @@ export async function fetchCardData() {
     /**
      * COUNT(*) 是一个聚合函数，用于计算表中的行数。星号 * 表示计算所有列的行数。相当于取数据的length。返回的数据是{ count: '13' }格式。
      */
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     /**
