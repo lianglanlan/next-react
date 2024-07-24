@@ -61,8 +61,15 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
+    /**
+     * COUNT(*) 是一个聚合函数，用于计算表中的行数。星号 * 表示计算所有列的行数。相当于取数据的length。返回的数据是{ count: '13' }格式。
+     */
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
+    /**
+     * SUM(...) AS "paid"：将...的结果进行求和，并将结果命名为 "paid"。
+     * CASE WHEN status = 'paid' THEN amount ELSE 0 END：条件表达式。如果 status 列的值为 'paid'，则返回 amount 列的值；否则返回 0。
+     */
     const invoiceStatusPromise = sql`SELECT
          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
