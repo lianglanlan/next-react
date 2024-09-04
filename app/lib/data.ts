@@ -98,6 +98,10 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
   /**
    * WHERE 用于在数据库中进行模糊搜索
    * ILIKE PostgreSQL 中的一个操作符，用于进行不区分大小写的模式匹配。
+   * ${`%${query}%`} 将查询字符串 query 包装成 SQL 的通配符模式 %query%，用于 ILIKE 运算符进行模糊匹配。
+   * ::text 类型转换操作符，将数值或日期类型的列转换为文本类型，以便进行字符串操作或比较
+   * LIMIT ${ITEMS_PER_PAGE}：限制返回的行数为 ITEMS_PER_PAGE。
+   * OFFSET ${offset}：跳过前 offset 行。
    */
   try {
     const invoices = await sql<InvoicesTable>`
