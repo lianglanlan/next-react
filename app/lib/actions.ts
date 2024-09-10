@@ -1,6 +1,8 @@
 'use server';
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -44,4 +46,7 @@ export const createInvoice = async (formData: FormData) => {
     INSERT INTO invoices (customer_id, amount, status,date)
     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `;
+  // 清除/dashboard/invoices路由的缓存，获取最新加入的数据
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
 };
