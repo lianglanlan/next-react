@@ -13,6 +13,7 @@ const FormSchema = z.object({
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 export const createInvoice = async (formData: FormData) => {
   const { customerId, amount, status } = CreateInvoice.parse({
@@ -47,6 +48,22 @@ export const createInvoice = async (formData: FormData) => {
     VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
   `;
   // 清除/dashboard/invoices路由的缓存，获取最新加入的数据
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
+};
+
+export const updateInvoice = async (id: string, formData: FormData) => {
+  const { customerId, amount, status } = UpdateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+  const amountInCents = amount * 100;
+  await sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+    WHERE id = ${id}
+  `;
   revalidatePath('/dashboard/invoices');
   redirect('/dashboard/invoices');
 };
