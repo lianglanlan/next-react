@@ -4,6 +4,15 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+export type State = {
+  errors?: {
+    customerId?: string[];
+    amount?: string[];
+    status?: string[];
+  };
+  message?: string | null;
+};
+
 const FormSchema = z.object({
   id: z.string(),
   customerId: z.string({
@@ -19,8 +28,8 @@ const FormSchema = z.object({
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
-export const createInvoice = async (formData: FormData) => {
-  const { customerId, amount, status } = CreateInvoice.parse({
+export const createInvoice = async (prevState: State, formData: FormData) => {
+  const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
     status: formData.get('status'),
@@ -43,6 +52,13 @@ export const createInvoice = async (formData: FormData) => {
         status: 'paid'
       }
   */
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Invoice.',
+    };
+  }
+  const { customerId, amount, status } = validatedFields.data;
   // 将元转化为分，避免浮点数的误差
   const amountInCents = amount * 100;
   // toISOString 返回  YYYY-MM-DDTHH:mm:ss.sssZ
